@@ -377,6 +377,7 @@ import CourseOutline from '@/components/CourseOutline.vue'
 import UserAvatar from '@/components/UserAvatar.vue'
 import Notes from '@/components/Notes/Notes.vue'
 import InlineLessonMenu from '@/components/Notes/InlineLessonMenu.vue'
+import { getEditorTools, enablePlyr } from '@/utils'
 
 const user = inject('$user')
 const socket = inject('$socket')
