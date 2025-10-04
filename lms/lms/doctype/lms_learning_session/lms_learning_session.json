@@ -1,0 +1,200 @@
+{
+  "actions": [],
+  "creation": "2025-10-03 15:20:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "session_id",
+    "member",
+    "member_name",
+    "course",
+    "course_name",
+    "column_break_5",
+    "chapter",
+    "chapter_name",
+    "lesson",
+    "lesson_name",
+    "section_break_10",
+    "start_time",
+    "end_time",
+    "active_time",
+    "idle_time",
+    "column_break_15",
+    "end_reason",
+    "device_info"
+  ],
+  "fields": [
+    {
+      "fieldname": "session_id",
+      "fieldtype": "Data",
+      "label": "Session ID",
+      "unique": 1,
+      "in_list_view": 1,
+      "in_standard_filter": 1
+    },
+    {
+      "fieldname": "member",
+      "fieldtype": "Link",
+      "options": "User",
+      "label": "Member",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "member_name",
+      "fieldtype": "Data",
+      "fetch_from": "member.full_name",
+      "label": "Member Name",
+      "read_only": 1
+    },
+    {
+      "fieldname": "course",
+      "fieldtype": "Link",
+      "options": "LMS Course",
+      "label": "Course",
+      "in_list_view": 1,
+      "in_standard_filter": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "course_name",
+      "fieldtype": "Data",
+      "fetch_from": "course.title",
+      "label": "Course Name",
+      "read_only": 1
+    },
+    {
+      "fieldname": "column_break_5",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "chapter",
+      "fieldtype": "Link",
+      "options": "Course Chapter",
+      "label": "Chapter",
+      "search_index": 1
+    },
+    {
+      "fieldname": "chapter_name",
+      "fieldtype": "Data",
+      "fetch_from": "chapter.title",
+      "label": "Chapter Name",
+      "read_only": 1
+    },
+    {
+      "fieldname": "lesson",
+      "fieldtype": "Link",
+      "options": "Course Lesson",
+      "label": "Lesson",
+      "search_index": 1
+    },
+    {
+      "fieldname": "lesson_name",
+      "fieldtype": "Data",
+      "fetch_from": "lesson.title",
+      "label": "Lesson Name",
+      "read_only": 1
+    },
+    {
+      "fieldname": "section_break_10",
+      "fieldtype": "Section Break",
+      "label": "Time Information"
+    },
+    {
+      "fieldname": "start_time",
+      "fieldtype": "Datetime",
+      "label": "Start Time",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "end_time",
+      "fieldtype": "Datetime",
+      "label": "End Time"
+    },
+    {
+      "fieldname": "active_time",
+      "fieldtype": "Int",
+      "label": "Active Time (seconds)"
+    },
+    {
+      "fieldname": "idle_time",
+      "fieldtype": "Int",
+      "label": "Idle Time (seconds)"
+    },
+    {
+      "fieldname": "column_break_15",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "end_reason",
+      "fieldtype": "Select",
+      "options": "navigate\nidle_timeout\nclose",
+      "label": "End Reason"
+    },
+    {
+      "fieldname": "device_info",
+      "fieldtype": "JSON",
+      "label": "Device Info"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2025-10-03 15:20:00.000000",
+  "modified_by": "Administrator",
+  "module": "LMS",
+  "name": "LMS Learning Session",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "LMS Student",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Moderator",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Course Creator",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1
+}

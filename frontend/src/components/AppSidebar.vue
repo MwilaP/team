@@ -197,6 +197,7 @@ import {
 	Users,
 	BookText,
 	Zap,
+	LineChart,
 	Check,
 } from 'lucide-vue-next'
 import {

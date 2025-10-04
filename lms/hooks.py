@@ -123,6 +123,7 @@ scheduler_events = {
 		"lms.lms.doctype.lms_payment.lms_payment.send_payment_reminder",
 		"lms.lms.doctype.lms_batch.lms_batch.send_batch_start_reminder",
 		"lms.lms.doctype.lms_live_class.lms_live_class.send_live_class_reminder",
+		"lms.lms.analytics.aggregate_daily_analytics",
 	],
 }
 
@@ -158,6 +159,9 @@ website_route_rules = [
 		"from_route": "/courses/<course_name>/<certificate_id>",
 		"to_route": "certificate",
 	},
+	{"from_route": "/lms/admin/analytics", "to_route": "lms/admin/analytics"},
+	{"from_route": "/lms/admin/analytics/course/<course>", "to_route": "lms/admin/analytics/course"},
+	{"from_route": "/lms/admin/analytics/student/<student>", "to_route": "lms/admin/analytics/student"},
 ]
 
 website_redirects = [

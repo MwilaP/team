@@ -23,7 +23,7 @@ const routes = [
 	{
 		path: '/courses/:courseName/learn/:chapterNumber-:lessonNumber',
 		name: 'Lesson',
-		component: () => import('@/pages/Lesson.vue'),
+		component: () => import('@/pages/LessonWithAnalytics.vue'),
 		props: true,
 	},
 	{
@@ -65,6 +65,23 @@ const routes = [
 		path: '/statistics',
 		name: 'Statistics',
 		component: () => import('@/pages/Statistics.vue'),
+	},
+	{
+		path: '/admin/analytics',
+		name: 'AdminAnalytics',
+		component: () => import('@/pages/AdminAnalytics.vue'),
+	},
+	{
+		path: '/admin/analytics/course/:course',
+		name: 'CourseAnalytics',
+		component: () => import('@/pages/CourseAnalytics.vue'),
+		props: true,
+	},
+	{
+		path: '/admin/analytics/student/:student',
+		name: 'StudentAnalytics',
+		component: () => import('@/pages/StudentAnalytics.vue'),
+		props: true,
 	},
 	{
 		path: '/user/:username',

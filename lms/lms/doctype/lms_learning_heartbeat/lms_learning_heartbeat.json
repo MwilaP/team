@@ -1,0 +1,144 @@
+{
+  "actions": [],
+  "creation": "2025-10-03 15:21:00.000000",
+  "doctype": "DocType",
+  "engine": "InnoDB",
+  "field_order": [
+    "session_id",
+    "member",
+    "course",
+    "column_break_3",
+    "unit_type",
+    "unit_id",
+    "section_break_6",
+    "timestamp",
+    "is_focused",
+    "is_visible",
+    "idle_ms"
+  ],
+  "fields": [
+    {
+      "fieldname": "session_id",
+      "fieldtype": "Data",
+      "label": "Session ID",
+      "in_list_view": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "member",
+      "fieldtype": "Link",
+      "options": "User",
+      "label": "Member",
+      "in_list_view": 1,
+      "search_index": 1
+    },
+    {
+      "fieldname": "course",
+      "fieldtype": "Link",
+      "options": "LMS Course",
+      "label": "Course",
+      "search_index": 1
+    },
+    {
+      "fieldname": "column_break_3",
+      "fieldtype": "Column Break"
+    },
+    {
+      "fieldname": "unit_type",
+      "fieldtype": "Select",
+      "options": "course\nchapter\nlesson",
+      "label": "Unit Type"
+    },
+    {
+      "fieldname": "unit_id",
+      "fieldtype": "Dynamic Link",
+      "options": "unit_type",
+      "label": "Unit ID"
+    },
+    {
+      "fieldname": "section_break_6",
+      "fieldtype": "Section Break",
+      "label": "Activity Data"
+    },
+    {
+      "fieldname": "timestamp",
+      "fieldtype": "Datetime",
+      "label": "Timestamp",
+      "in_list_view": 1
+    },
+    {
+      "fieldname": "is_focused",
+      "fieldtype": "Check",
+      "label": "Is Focused"
+    },
+    {
+      "fieldname": "is_visible",
+      "fieldtype": "Check",
+      "label": "Is Visible"
+    },
+    {
+      "fieldname": "idle_ms",
+      "fieldtype": "Int",
+      "label": "Idle Time (ms)"
+    }
+  ],
+  "index_web_pages_for_search": 1,
+  "links": [],
+  "modified": "2025-10-03 15:21:00.000000",
+  "modified_by": "Administrator",
+  "module": "LMS",
+  "name": "LMS Learning Heartbeat",
+  "owner": "Administrator",
+  "permissions": [
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "System Manager",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "LMS Student",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Moderator",
+      "share": 1,
+      "write": 1
+    },
+    {
+      "create": 1,
+      "delete": 1,
+      "email": 1,
+      "export": 1,
+      "print": 1,
+      "read": 1,
+      "report": 1,
+      "role": "Course Creator",
+      "share": 1,
+      "write": 1
+    }
+  ],
+  "sort_field": "modified",
+  "sort_order": "DESC",
+  "track_changes": 1
+}

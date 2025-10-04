@@ -39,7 +39,7 @@ export default defineConfig({
 	server: {
 		host: '0.0.0.0', // Accept connections from any network interface
 		allowedHosts: ['ps', 'fs', 'home'], // Explicitly allow this host
-	},
+	 },
 	resolve: {
 		alias: {
 			'@': path.resolve(__dirname, 'src'),

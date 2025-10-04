@@ -439,6 +439,12 @@ export function getSidebarLinks() {
 			to: 'Statistics',
 			activeFor: ['Statistics'],
 		},
+		{
+			label: 'Learning Analytics',
+			icon: 'LineChart',
+			to: 'AdminAnalytics',
+			activeFor: ['AdminAnalytics', 'CourseAnalytics', 'StudentAnalytics'],
+		},
 	]
 }
 

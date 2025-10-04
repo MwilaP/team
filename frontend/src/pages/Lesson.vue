@@ -361,11 +361,14 @@ import {
 	Focus,
 	Info,
 	MessageCircleQuestion,
-	TrendingUp,
-} from 'lucide-vue-next'
-import { getEditorTools, enablePlyr, highlightText } from '@/utils'
-import { sessionStore } from '@/stores/session'
-import { useSidebar } from '@/stores/sidebar'
+	TrendingUp
+import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
+import { useRouter } from 'vue-router'
+import { createResource, Button, Tooltip } from 'frappe-ui'
+import { sessionStore } from '../stores/session'
+import { sidebarStore } from '../stores/sidebar'
+import socket from '../socket'
+import learningAnalytics from '../lib/learning-analytics'
 import EditorJS from '@editorjs/editorjs'
 import LessonContent from '@/components/LessonContent.vue'
 import CourseInstructors from '@/components/CourseInstructors.vue'
