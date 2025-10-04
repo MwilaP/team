@@ -28,7 +28,7 @@ from frappe.utils import (
 from frappe.utils.response import Response
 
 from lms.lms.doctype.course_lesson.course_lesson import save_progress
-from lms.lms.utils import get_average_rating, get_lesson_count
+from lms.lms.utils import get_average_rating, get_lesson_count, get_courses as utils_get_courses
 
 
 @frappe.whitelist()
@@ -37,6 +37,12 @@ def autosave_section(section, code):
 	doc = frappe.get_doc(doctype="Code Revision", section=section, code=code, author=frappe.session.user)
 	doc.insert()
 	return {"name": doc.name}
+
+
+@frappe.whitelist()
+def get_courses():
+	"""Get all courses for the current user."""
+	return utils_get_courses()
 
 
 @frappe.whitelist()

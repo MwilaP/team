@@ -156,6 +156,7 @@ const timer = ref(0)
 const { brand } = sessionStore()
 const sidebarStore = useSidebar()
 
+// Timer function
 let timerInterval
 
 const tabs = ref([
@@ -179,6 +180,14 @@ const props = defineProps({
     required: true,
   },
 })
+
+// Start timer function
+function startTimer() {
+  timer.value = 0
+  timerInterval = setInterval(() => {
+    timer.value += 1
+  }, 1000)
+}
 
 onMounted(() => {
   startTimer()
@@ -235,9 +244,24 @@ onBeforeUnmount(() => {
   
   // End analytics tracking when navigating away
   learningAnalytics.endSession('navigate')
+  
+  // Clear timer
+  if (timerInterval) {
+    clearInterval(timerInterval)
+  }
 })
 
-// Rest of the script content...
+const lesson = createResource({
+  url: 'lms.lms.utils.get_lesson',
+  makeParams(values) {
+    return {
+      course: props.courseName,
+      chapter: values ? values.chapter : props.chapterNumber,
+      lesson: values ? values.lesson : props.lessonNumber,
+    }
+  },
+  auto: true,
+})
 
 // Handle lesson switching with analytics
 function switchLesson(direction) {
@@ -266,7 +290,74 @@ function switchLesson(direction) {
   }
 }
 
-// Rest of the script content...
+// Add other required functions
+function canGoZen() {
+  return true
+}
+
+function canSeeStats() {
+  return user && (user.is_instructor || user.is_moderator)
+}
+
+function showVideoStats() {
+  showStatsDialog.value = true
+}
+
+function allowEdit() {
+  return user && (user.is_instructor || user.is_moderator)
+}
+
+function login() {
+  window.location.href = '/login'
+}
+
+function trackVideoWatchDuration() {
+  // Implementation for tracking video watch duration
+}
+
+// Breadcrumbs
+const breadcrumbs = computed(() => {
+  if (!lesson.data) return []
+  
+  return [
+    {
+      label: lesson.data.course_title,
+      route: {
+        name: 'CourseDetail',
+        params: { courseName: props.courseName },
+      },
+    },
+    {
+      label: lesson.data.chapter_title,
+      route: {
+        name: 'CourseDetail',
+        params: { courseName: props.courseName },
+        hash: `#chapter-${props.chapterNumber}`,
+      },
+    },
+    {
+      label: lesson.data.title,
+      route: {
+        name: 'Lesson',
+        params: {
+          courseName: props.courseName,
+          chapterNumber: props.chapterNumber,
+          lessonNumber: props.lessonNumber,
+        },
+      },
+    },
+  ]
+})
+
+// Page meta
+usePageMeta(() => {
+  if (!lesson.data) return {}
+  
+  return {
+    title: lesson.data.title,
+    icon: brand.favicon,
+  }
+})
 </script>
 
 <style>

@@ -362,12 +362,9 @@ import {
 	Info,
 	MessageCircleQuestion,
 	TrendingUp
-import { ref, computed, onMounted, onBeforeUnmount } from 'vue'
-import { useRouter } from 'vue-router'
-import { createResource, Button, Tooltip } from 'frappe-ui'
+} from 'lucide-vue-next'
 import { sessionStore } from '../stores/session'
-import { sidebarStore } from '../stores/sidebar'
-import socket from '../socket'
+import { useSidebar } from '../stores/sidebar'
 import learningAnalytics from '../lib/learning-analytics'
 import EditorJS from '@editorjs/editorjs'
 import LessonContent from '@/components/LessonContent.vue'
@@ -433,6 +430,14 @@ onMounted(() => {
 			lessonProgress.value = data.progress
 		}
 	})
+	
+	// Initialize learning analytics
+	learningAnalytics.init()
+	
+	// Start tracking when lesson data is available
+	if (lesson.data) {
+		learningAnalytics.startSession(props.courseName, 'lesson', lesson.data.name)
+	}
 })
 
 const attachFullscreenEvent = () => {
@@ -451,6 +456,9 @@ onBeforeUnmount(() => {
 	document.removeEventListener('fullscreenchange', attachFullscreenEvent)
 	sidebarStore.isSidebarCollapsed = false
 	trackVideoWatchDuration()
+	
+	// End analytics tracking when leaving the lesson
+	learningAnalytics.endSession('navigate')
 })
 
 const lesson = createResource({

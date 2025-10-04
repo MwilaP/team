@@ -23,7 +23,7 @@ const routes = [
 	{
 		path: '/courses/:courseName/learn/:chapterNumber-:lessonNumber',
 		name: 'Lesson',
-		component: () => import('@/pages/LessonWithAnalytics.vue'),
+		component: () => import('@/pages/Lesson.vue'),
 		props: true,
 	},
 	{
