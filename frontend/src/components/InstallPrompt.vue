@@ -1,7 +1,7 @@
 <template>
 	<Dialog v-model="showDialog">
 		<template #body-title>
-			<h2 class="text-lg font-bold">{{ __('Install Frappe Learning') }}</h2>
+			<h2 class="text-lg font-bold">{{ __('Install TeamWila') }}</h2>
 		</template>
 		<template #body-content>
 			<p>
