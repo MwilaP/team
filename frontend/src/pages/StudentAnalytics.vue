@@ -151,7 +151,7 @@
                     <th class="px-4 py-3">{{ __('Time Spent') }}</th>
                     <th class="px-4 py-3">{{ __('Last Access') }}</th>
                   </tr>
-                </thead>
+                </thead>    
                 <tbody>
                   <template v-for="(chapter, chapterIndex) in selectedCourse.chapters" :key="chapterIndex">
                     <!-- Chapter row -->

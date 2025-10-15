@@ -45,28 +45,8 @@ def update_time_analytics(session):
         })
         doc.insert(ignore_permissions=True)
     
-    # Update course progress with time info
-    progress_filters = {
-        "member": session.member,
-        "course": session.course
-    }
-    
-    if session.lesson:
-        progress_filters["lesson"] = session.lesson
-    
-    progress = frappe.get_all("LMS Course Progress", filters=progress_filters, fields=["name", "total_active_time"])
-    
-    if progress:
-        for p in progress:
-            current_time = cint(p.get("total_active_time") or 0)
-            frappe.db.set_value(
-                "LMS Course Progress", 
-                p.name, 
-                {
-                    "total_active_time": current_time + cint(session.active_time),
-                    "last_active": now_datetime()
-                }
-            )
+    # Note: Time tracking is stored in LMS Time Analytics
+    # LMS Course Progress is used only for completion tracking
 
 
 def get_student_time_analytics(student=None, course=None, from_date=None, to_date=None):

@@ -49,17 +49,22 @@ class LearningAnalytics {
   // Start a learning session
   startSession(courseId, unitType, unitId) {
     try {
+      console.log('[Analytics] startSession called:', { courseId, unitType, unitId });
+      
       // End any existing session
       if (this.currentSession) {
+        console.log('[Analytics] Ending previous session before starting new one');
         this.endSession('navigate');
       }
       
       // Create new session
+      console.log('[Analytics] Calling API to start session...');
       call('lms.lms.learning_analytics_api.track_learning_session_start', {
         course_id: courseId,
         unit_type: unitType,
         unit_id: unitId
       }).then(response => {
+        console.log('[Analytics] Session started successfully:', response);
         this.currentSession = {
           id: response.session_id,
           courseId,
@@ -69,9 +74,10 @@ class LearningAnalytics {
         };
         
         // Start heartbeat
+        console.log('[Analytics] Starting heartbeat timer (15s interval)');
         this._startHeartbeat();
       }).catch(error => {
-        console.error('Failed to start learning session:', error);
+        console.error('[Analytics] Failed to start learning session:', error);
         // Store session start for offline processing
         this._queueOfflineEvent('session_start', {
           course_id: courseId,
@@ -81,14 +87,22 @@ class LearningAnalytics {
         });
       });
     } catch (error) {
-      console.error('Error in startSession:', error);
+      console.error('[Analytics] Error in startSession:', error);
     }
   }
 
   // End current session
   endSession(reason = 'navigate') {
     try {
-      if (!this.currentSession) return;
+      if (!this.currentSession) {
+        console.log('[Analytics] endSession called but no active session');
+        return;
+      }
+      
+      console.log('[Analytics] Ending session:', {
+        session_id: this.currentSession.id,
+        reason: reason
+      });
       
       // Stop heartbeat
       this._stopHeartbeat();
@@ -97,8 +111,10 @@ class LearningAnalytics {
       call('lms.lms.learning_analytics_api.track_learning_session_end', {
         session_id: this.currentSession.id,
         end_reason: reason
+      }).then((response) => {
+        console.log('[Analytics] Session ended successfully:', response);
       }).catch(error => {
-        console.error('Failed to end learning session:', error);
+        console.error('[Analytics] Failed to end learning session:', error);
         // Store session end for offline processing
         this._queueOfflineEvent('session_end', {
           session_id: this.currentSession.id,
@@ -109,7 +125,7 @@ class LearningAnalytics {
       
       this.currentSession = null;
     } catch (error) {
-      console.error('Error in endSession:', error);
+      console.error('[Analytics] Error in endSession:', error);
     }
   }
 
@@ -132,7 +148,10 @@ class LearningAnalytics {
   // Private: Send heartbeat to server
   _sendHeartbeat() {
     try {
-      if (!this.currentSession) return;
+      if (!this.currentSession) {
+        console.warn('[Analytics] Heartbeat skipped - no active session');
+        return;
+      }
       
       // Calculate idle time
       const idleTime = Date.now() - this.lastActivity;
@@ -140,6 +159,7 @@ class LearningAnalytics {
       // Check if user is idle
       if (idleTime >= IDLE_TIMEOUT) {
         this.isActive = false;
+        console.log('[Analytics] User idle timeout reached, ending session');
         
         // If idle timeout reached, end session
         this.endSession('idle_timeout');
@@ -147,13 +167,22 @@ class LearningAnalytics {
       }
       
       // Send heartbeat
+      console.log('[Analytics] Sending heartbeat:', {
+        session_id: this.currentSession.id,
+        is_focused: this.isActive,
+        is_visible: this.isVisible,
+        idle_ms: Math.round(idleTime)
+      });
+      
       call('lms.lms.learning_analytics_api.track_learning_heartbeat', {
         session_id: this.currentSession.id,
         is_focused: this.isActive,
         is_visible: this.isVisible,
         idle_ms: idleTime
+      }).then(() => {
+        console.log('[Analytics] Heartbeat sent successfully');
       }).catch(error => {
-        console.error('Failed to send heartbeat:', error);
+        console.error('[Analytics] Failed to send heartbeat:', error);
         // Store heartbeat for offline processing
         this._queueOfflineEvent('heartbeat', {
           session_id: this.currentSession.id,
@@ -164,7 +193,7 @@ class LearningAnalytics {
         });
       });
     } catch (error) {
-      console.error('Error in _sendHeartbeat:', error);
+      console.error('[Analytics] Error in _sendHeartbeat:', error);
     }
   }
 

@@ -24,33 +24,6 @@ class LMSLearningSession(Document):
     
     def on_update(self):
         """Update related records when session is updated."""
-        if self.end_time and self.active_time:
-            # Update LMS Course Progress with time info
-            self.update_course_progress()
-    
-    def update_course_progress(self):
-        """Update course progress with time information."""
-        filters = {
-            "member": self.member,
-            "course": self.course
-        }
-        
-        if self.lesson:
-            filters["lesson"] = self.lesson
-        
-        progress_records = frappe.get_all(
-            "LMS Course Progress",
-            filters=filters,
-            fields=["name", "total_active_time"]
-        )
-        
-        for record in progress_records:
-            current_time = record.get("total_active_time") or 0
-            frappe.db.set_value(
-                "LMS Course Progress",
-                record.name,
-                {
-                    "total_active_time": current_time + self.active_time,
-                    "last_active": frappe.utils.now()
-                }
-            )
+        # Time tracking is handled by LMS Time Analytics
+        # No need to update LMS Course Progress
+        pass

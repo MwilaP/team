@@ -94,26 +94,54 @@ def track_learning_session_end(session_id, end_reason="navigate"):
         session.end_time = now()
         session.end_reason = end_reason
         
-        # Calculate active time from heartbeats
+        # Calculate active and idle time from heartbeats
         heartbeats = frappe.get_all(
             "LMS Learning Heartbeat",
-            filters={"session_id": session_id, "is_focused": 1, "is_visible": 1},
-            fields=["timestamp"],
+            filters={"session_id": session_id},
+            fields=["timestamp", "is_focused", "is_visible", "idle_ms"],
             order_by="timestamp"
         )
         
-        if heartbeats:
-            # Simple calculation: time between first and last active heartbeat
-            active_time = (get_datetime(session.end_time) - 
-                          get_datetime(heartbeats[0].timestamp)).total_seconds()
-            session.active_time = min(active_time, 7200)  # Cap at 2 hours
+        active_time = 0
+        idle_time = 0
         
+        if heartbeats:
+            # Calculate time based on heartbeat intervals (15 seconds each)
+            for i, heartbeat in enumerate(heartbeats):
+                # Each heartbeat represents ~15 seconds of activity
+                interval = 15  # seconds
+                
+                if heartbeat.is_focused and heartbeat.is_visible:
+                    # User was active during this interval
+                    active_time += interval
+                else:
+                    # User was idle/unfocused during this interval
+                    idle_time += interval
+            
+            # If no heartbeats were active, calculate from start to end time
+            if active_time == 0 and len(heartbeats) > 0:
+                total_time = (get_datetime(session.end_time) - 
+                             get_datetime(session.start_time)).total_seconds()
+                active_time = max(0, total_time - idle_time)
+        else:
+            # No heartbeats - calculate from session duration
+            total_time = (get_datetime(session.end_time) - 
+                         get_datetime(session.start_time)).total_seconds()
+            # Assume active if session was short (< 5 minutes)
+            if total_time < 300:
+                active_time = total_time
+            else:
+                # For longer sessions without heartbeats, be conservative
+                active_time = min(total_time, 60)  # Cap at 1 minute
+        
+        session.active_time = int(active_time)
+        session.idle_time = int(idle_time)
         session.save(ignore_permissions=True)
         
         # Update aggregates
         update_time_analytics(session)
         
-        return {"status": "success"}
+        return {"status": "success", "active_time": int(active_time), "idle_time": int(idle_time)}
     except Exception as e:
         frappe.log_error(f"Error ending session: {str(e)}")
         return {"status": "error", "message": str(e)}
@@ -201,7 +229,8 @@ def get_course_analytics(course, from_date=None, to_date=None):
         frappe.throw(_("Not permitted"), frappe.PermissionError)
     
     # Check if user has permission to view this course
-    if frappe.has_role("Course Creator") and not frappe.has_role("System Manager"):
+    user_roles = frappe.get_roles(frappe.session.user)
+    if "Course Creator" in user_roles and "System Manager" not in user_roles:
         course_owner = frappe.db.get_value("LMS Course", course, "owner")
         if course_owner != frappe.session.user:
             frappe.throw(_("Not permitted"), frappe.PermissionError)
@@ -223,10 +252,11 @@ def get_student_analytics(student, course=None):
     
     # Check if user is viewing their own data or has admin rights
     is_self = student == frappe.session.user
-    is_admin = frappe.has_role("System Manager") or frappe.has_role("Moderator")
+    user_roles = frappe.get_roles(frappe.session.user)
+    is_admin = "System Manager" in user_roles or "Moderator" in user_roles
     is_course_admin = False
     
-    if course and frappe.has_role("Course Creator"):
+    if course and "Course Creator" in user_roles:
         course_owner = frappe.db.get_value("LMS Course", course, "owner")
         is_course_admin = course_owner == frappe.session.user
     

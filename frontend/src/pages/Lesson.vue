@@ -422,6 +422,10 @@ const props = defineProps({
 	},
 })
 
+// Track if analytics has been initialized
+const analyticsInitialized = ref(false)
+const currentLessonTracked = ref(null)
+
 onMounted(() => {
 	startTimer()
 	sidebarStore.isSidebarCollapsed = true
@@ -432,12 +436,11 @@ onMounted(() => {
 		}
 	})
 	
-	// Initialize learning analytics
-	learningAnalytics.init()
-	
-	// Start tracking when lesson data is available
-	if (lesson.data) {
-		learningAnalytics.startSession(props.courseName, 'lesson', lesson.data.name)
+	// Initialize learning analytics once
+	if (!analyticsInitialized.value) {
+		learningAnalytics.init()
+		analyticsInitialized.value = true
+		console.log('[Analytics] Initialized')
 	}
 })
 
@@ -459,7 +462,9 @@ onBeforeUnmount(() => {
 	trackVideoWatchDuration()
 	
 	// End analytics tracking when leaving the lesson
+	console.log('[Analytics] Component unmounting, ending session')
 	learningAnalytics.endSession('navigate')
+	currentLessonTracked.value = null
 })
 
 const lesson = createResource({
@@ -473,6 +478,23 @@ const lesson = createResource({
 	},
 	auto: true,
 })
+
+// Watch for lesson data to load and start tracking
+watch(() => lesson.data, (newData, oldData) => {
+	if (newData && newData.name) {
+		// Only start new session if lesson actually changed
+		if (currentLessonTracked.value !== newData.name) {
+			console.log('[Analytics] Lesson loaded:', newData.name)
+			console.log('[Analytics] Starting session for:', {
+				course: props.courseName,
+				lesson: newData.name
+			})
+			
+			learningAnalytics.startSession(props.courseName, 'lesson', newData.name)
+			currentLessonTracked.value = newData.name
+		}
+	}
+}, { immediate: true })
 
 const setupLesson = (data) => {
 	if (Object.keys(data).length === 0) {
